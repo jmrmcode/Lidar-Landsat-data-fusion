@@ -1,0 +1,58 @@
+# # source: https://github.com/JesJehle/earthEngineGrabR
+# require('remotes')
+# remotes::install_github("JesJehle/earthEngineGrabR")
+require('earthEngineGrabR')
+require('raster')
+require('rgdal')
+require('abind')
+require('stringr')
+require('googledrive')
+require('rgeos')
+require('spatialEco')
+
+shapefilesLiDAR <- list.files('C:/Users/juanmiRequena/Documents/AIforEarth/shapefilesLiDAR', pattern = '.shp')
+
+# load the NDVI Landsat imagery from the GEE
+# NDVI "LANDSAT/LC08/C01/T1_8DAY_NDVI"
+# EVI "LANDSAT/LC08/C01/T1_8DAY_EVI"
+# NDWI "LANDSAT/LC08/C01/T1_8DAY_NDWI"
+
+GEEImage1 <- NULL
+GEEImage1Rep <- NULL
+
+for (k in shapefilesLiDAR) {
+  
+  GEEImage <- try(ee_grab(data = ee_data_collection(datasetID = "LANDSAT/LC08/C01/T1_8DAY_EVI",
+              spatialReducer = "mean",
+              temporalReducer = "mean",
+              timeStart = "2013-04-01",
+              timeEnd = "2013-05-31",
+              resolution = 30,
+              bandSelection = c('EVI')
+  ),
+  targetArea = paste0('C:/Users/juanmiRequena/Documents/AIforEarth/shapefilesLiDAR/', k)
+  ))
+  
+  if(class(GEEImage) %in% 'try-error') {GEEImageRep <- ee_grab(data = ee_data_collection(datasetID = "LANDSAT/LC08/C01/T1_8DAY_EVI",
+                     spatialReducer = "mean",
+                     temporalReducer = "mean",
+                     timeStart = "2013-04-01",
+                     timeEnd = "2013-05-31",
+                     resolution = 30,
+                     bandSelection = c('EVI')
+  ),
+  targetArea = paste0('C:/Users/juanmiRequena/Documents/AIforEarth/shapefilesLiDAR/', k)
+  )
+  
+  GEEImage1Rep<-as.array(as.list(GEEImageRep))[c(3,4,6)]
+  save(GEEImage1Rep, file = paste0('C:/Users/juanmiRequena/Documents/AIforEarth/EVI/',str_remove(k,pattern = '.shp'),'.Rdata'))
+  drive_rm(str_remove(k,pattern = '.shp'))
+  
+  } else {
+    
+    GEEImage1<-as.array(as.list(GEEImage))[c(3,4,6)]
+    save(GEEImage1, file = paste0('C:/Users/juanmiRequena/Documents/AIforEarth/EVI/',str_remove(k,pattern = '.shp'),'.Rdata'))
+    drive_rm(str_remove(k,pattern = '.shp'))
+    
+  }
+}
