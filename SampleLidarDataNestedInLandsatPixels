@@ -1,0 +1,143 @@
+require('rgdal')
+require('tools')
+require('getlandsat')
+require('rLandsat')
+require('sf')
+require('rgeos')
+require('abind')
+require('stringr')
+require('spatialEco')
+require('filesstrings')
+
+## load the paths to the Lidar images
+pathTifImages <- list.files('~/path to the folder having the imported Lidar images')
+
+# load the Landsat tiles shapefile
+pathrow <- shapefile('~/path the folder having the tiles shapefile/WRS2_descending.shp')[,c(7,8)]
+pathrow <- st_as_sf(pathrow)
+# get all the available Landsat images
+res <- lsat_scenes()
+# extract the centroids of the 1x1 m LiDAR pixels within 30x30 m plots
+for (j in pathTifImages) {
+  # clean memory
+  rm(list=setdiff(ls(), c("pathTifImages", "j", "pathrow", "res")))
+  gc(full = TRUE)
+  
+  # import the Lidar images
+  gg <- raster(paste0('~/path to the folder having the imported Lidar images/',j))
+  # get the coordinates of the centroids of the 1x1 m pixels
+  ggg <- rasterToPoints(gg, spatial = TRUE)
+  # reclassify to 1s the native Lidar image
+  gggg <- reclassify(gg, rcl=c(-1e12,1e12,1))
+  
+  # aggregate the reclassified image to 30x30 m pixels
+  ssagg <- try(agg <- aggregate(gggg, fact=100))
+  # discard images which don't allow aggregating to 30 m and remove the matching Lidar image
+  if(class(ssagg) %in% 'try-error') {file.remove(paste0('~/path to the folder having the imported Lidar images/',j)); next} 
+  else {
+    
+    # vectorize the aggregated image to get its boundary
+    vvv <- rasterToPolygons(agg, dissolve=T)
+    # transform the CSV to the one of the pathrow.shp file
+    vvv2 <- spTransform(vvv, CRS("+proj=longlat +datum=WGS84 +no_defs"))
+    # convert to a sf object
+    vvv3 <- st_as_sf(vvv2)
+    # divides the loop in two parts depending on if there are two overlapping
+    # LS images (if == T) or only one (if==F)
+    if (length(st_intersects(vvv3, pathrow)[[1]])==2 || length(st_intersects(vvv3, pathrow)[[1]])==3) {
+      # get 
+      rr <- as.numeric(st_intersects(vvv3, pathrow)[[1]][2])
+      pa <- as.numeric(pathrow$PATH[rr])
+      ro <- as.numeric(pathrow$ROW[rr])
+      res2 <- res[which(res$path==pa & res$row==ro),]
+      img1 <- lsat_scene_files(x = res2$download_url[1])[which(endsWith(lsat_scene_files(x = res2$download_url[1])[,1], '.TIF')==TRUE)[1],1]
+      img2 <- raster(lsat_image(x = img1))
+      
+      vvvV <- spTransform(vvv, crs(img2))
+      cropp <- crop(img2, extent(vvvV))
+      cropp2 <- rasterToPolygons(cropp, dissolve=F)
+      
+      # reduce the boundaries of the Lidat images by 50 m 
+      boundBuf <- gBuffer(vvv,width = -50)
+      # discard shapefiles smaller than 50 m and remove the matching Lidar image
+      if (is.null(boundBuf)) {file.remove(paste0('~/path to the folder having the imported Lidar images/',j)); next} 
+      else {
+        
+        # reduce the boundaries of the 30x30 m plot by 5 m
+        pixelBuf <- gBuffer(cropp2, width = -5, id = c(1:length(cropp2)), byid = T)
+        # clip the buffered pixels by the buffered regions
+        boundBuf2 <- spTransform(boundBuf, crs(pixelBuf))
+        pixelCrop <- crop(pixelBuf, boundBuf2)
+        # creates poligons ID and Site ID columns
+        pixelCrop$idPlot30m<-as.factor(c(1:length(pixelCrop)))
+        namesSiteComplete <- str_remove(file_path_sans_ext(basename(j)), pattern = "AMIGACarb_")
+        namesSiteBrief <- substr(namesSiteComplete, start = 1, stop = 19)
+        pixelCrop$siteID<-as.factor(namesSiteBrief)
+        # clip the centroids file by the buffered 30x30 m grid
+        gggG <- spTransform(ggg, crs(pixelBuf))
+        pointsClip <- gIntersection(gggG[sample(1:length(gggG),3000),], pixelCrop, byid=T)
+        # extract a subsample of 1000 centroids
+        spSample <- try(spSampleB <- pointsClip[sample(1:length(pointsClip),1000),])
+        
+        # discard shapefiles with less than 1000 points and remove the matching LiDAR image
+        if(class(spSample) %in% 'try-error') {file.remove(paste0('~/path to the folder having the imported Lidar images/',j)); next} 
+        else {
+          
+          # add the polygons ID as a column
+          finalPoints1 <- point.in.poly(spSampleB, pixelCrop)
+          # transform the CRS to match the one of Landsat images below
+          finalPoints <- spTransform(finalPoints1, CRS("+proj=longlat +init=epsg:4326"))
+          # export the shapefile of points
+          writeOGR(finalPoints, dsn = "~/destination folder path",layer = str_remove(file_path_sans_ext(basename(j)), pattern = "AMIGACarb_"),
+          driver = "ESRI Shapefile", verbose = F)
+        }
+      }
+    } else {
+      rr <- as.numeric(st_intersects(vvv3, pathrow)[[1]][1])
+      pa <- as.numeric(pathrow$PATH[rr])
+      ro <- as.numeric(pathrow$ROW[rr])
+      res2 <- res[which(res$path==pa & res$row==ro),]
+      img1 <- lsat_scene_files(x = res2$download_url[1])[which(endsWith(lsat_scene_files(x = res2$download_url[1])[,1], '.TIF')==TRUE)[1],1]
+      img2 <- raster(lsat_image(x = img1))
+      vvvV <- spTransform(vvv, crs(img2))
+      cropp <- crop(img2, extent(vvvV))
+      cropp2 <- rasterToPolygons(cropp, dissolve=F)
+      
+      # reduce the boundaries of the LiDAR images by 50 m 
+      boundBuf <- gBuffer(vvv,width = -50)
+      # discard shapefile smaller than 50 m and remove the matching Lidar image
+      if (is.null(boundBuf)) {file.remove(paste0('~/path to the folder having the imported Lidar images/',j)); next} 
+      else {
+        
+        # reduce the boundaries of the 30x30 m plot by 5 m
+        pixelBuf <- gBuffer(cropp2, width = -5, id = c(1:length(cropp2)), byid = T)
+        # clip the buffered pixels by the buffered regions
+        boundBuf2 <- spTransform(boundBuf, crs(pixelBuf))
+        pixelCrop <- crop(pixelBuf, boundBuf2)
+        # creates poligons ID and Site ID columns
+        pixelCrop$idPlot30m<-as.factor(c(1:length(pixelCrop)))
+        namesSiteComplete <- str_remove(file_path_sans_ext(basename(j)), pattern = "AMIGACarb_")
+        namesSiteBrief <- substr(namesSiteComplete, start = 1, stop = 19)
+        pixelCrop$siteID<-as.factor(namesSiteBrief)
+        # clip centroids by buffered 30 x 30 m plots
+        gggG <- spTransform(ggg, crs(pixelBuf))
+        pointsClip <- gIntersection(gggG[sample(1:length(gggG),3000),], pixelCrop, byid=T)
+        # extract a subsample of 1000centroids
+        spSample <- try(spSampleB <- pointsClip[sample(1:length(pointsClip),1000),])
+        
+        # discard shapefiles with less than 1000 points and remove the matching LiDAR image
+        if(class(spSample) %in% 'try-error') {file.remove(paste0('~/path to the folder having the imported Lidar images/',j)); next} 
+        else {
+          
+          # add the polygon ID as a column
+          finalPoints1 <- point.in.poly(spSampleB, pixelCrop)
+          # transform the CRS to match the one of Landsat images below
+          finalPoints <- spTransform(finalPoints1, CRS("+proj=longlat +init=epsg:4326"))
+          # export the points shapefile
+          writeOGR(finalPoints, dsn = '~/destination folder path',layer = str_remove(file_path_sans_ext(basename(j)), pattern = "AMIGACarb_"),
+          driver = "ESRI Shapefile", verbose = F)
+        }
+      }
+    }
+  }
+}
