@@ -43,8 +43,8 @@ Airborne light detection and ranging (lidar) data have great potential to map ve
 
 ## Key documents<a name="Key_documents"></a>
 
-[Import&UnpackLidarImages](Import&UnpackLidarImages) - Import and unpack Lidar images
-[]() - 
+- [Import&UnpackLidarImages](Import&UnpackLidarImages) - Import and unpack Lidar images
+- [SampleLidarDataNestedInLandsatPixels](SampleLidarDataNestedInLandsatPixels) - Access to Landsat 8 images that spatially overlap with the Lidar images and sample Lidar-derived canopy height data nested in Landsat pixels
 
 ## Supplementary data<a name="Supplementary_data"></a>
 
