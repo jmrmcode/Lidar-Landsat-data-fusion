@@ -33,7 +33,7 @@ Airborne light detection and ranging (lidar) data have great potential to map ve
 ![Sampling design](https://github.com/jmrmcode/Lidar-Landsat-data-fusion/blob/master/general.png)
 *Legend: Lidar image of canopy height acquired at NASA's G-LiHT Data Center (background image); 30x30 m Landsat pixels (in purple); 50 meters buffer to discard missing data (outer line in red); Landsat pixels reduced by 5 m (in green) to avoid edge effect. Sampling points (in orange).*
 
-- Request and import Landsat-derived vegetation indices from [Google Earth Engine](https://earthengine.google.com/) using the points sampled earlier.
+- Request and import Landsat-derived vegetation indices from [Google Earth Engine (GEE)](https://earthengine.google.com/) using the points sampled earlier.
 - Extract Lidar-derived canopy height data using the points sampled earlier.
 
 ## Development team <a name="Development_team"></a>
@@ -45,7 +45,7 @@ Airborne light detection and ranging (lidar) data have great potential to map ve
 
 - [Import&UnpackLidarImages](Import&UnpackLidarImages) - Import and unpack Lidar images
 - [SampleLidarDataNestedInLandsatPixels](SampleLidarDataNestedInLandsatPixels) - Access to Landsat images that spatially overlap with the Lidar images and sample Lidar-derived canopy height data nested in Landsat pixels
-- []()
+- [ImportVegetationIndicesDataFromGEE](ImportVegetationIndicesDataFromGEE) - Request and import Landsat-derived vegetation indices from GEE
 
 ## Supplementary data<a name="Supplementary_data"></a>
 
