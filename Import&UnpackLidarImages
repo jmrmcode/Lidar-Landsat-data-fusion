@@ -1,4 +1,8 @@
+require('curl')
+
 ## Import and unpack Lidar images from the G-LiHT NASA server
+
+# load the URLs to the Lidar images
 URLs <- read.csv('~/urls.csv')
 
 for (i in c(1:nrow(URLs))) {
