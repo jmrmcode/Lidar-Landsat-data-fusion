@@ -8,7 +8,8 @@ A collection of R scripts to import, manipulate and sample iteratively large-sca
 3. [What does it do](#Learning_outcomes)
 4. [Development team](#Development_team)
 5. [Key documents](#Key_documents)
-6. [Licenses](#Licenses)
+6. [Supplementary data](#Supplementary_data)
+7. [Licenses](#Licenses)
 
 ## Introduction
 
@@ -40,7 +41,11 @@ Airborne light detection and ranging (lidar) data have great potential to map ve
 - [Juan Miguel Requena Mullor](https://github.com/jmrmcode), Boise State University, USA.
 - [Trevor Caughlin](http://www.trevorcaughlin.com/), Boise State University, USA.
 
-## Key documents <a name="Key_documents"></a>
+## Key documents<a name="Key_documents"></a>
 
 [Import&UnpackLidarImages](Import&UnpackLidarImages) - Import and unpack Lidar images
 []() - 
+
+## Supplementary data<a name="Supplementary_data"></a>
+
+URLs, tiles Landsat shapefile, 
