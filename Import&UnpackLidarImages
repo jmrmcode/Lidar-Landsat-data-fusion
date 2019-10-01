@@ -1,0 +1,17 @@
+## Import and unpack Lidar images from the G-LiHT NASA server
+URLs <- read.csv('~/urls.csv')
+
+for (i in c(1:nrow(URLs))) {
+  
+  # download the .tar.gz files
+  hh <- new_handle()
+  dd <- curl_download(url = paste0(URLs$url[i]),
+         destfile = paste0('~/destination folder path/',URLs$Site[i],'.tar.gz'), quiet = TRUE,
+         handle = hh)
+  
+  # unpack the images in the tar.gz files
+  unpacked <- try(untar(paste0('~/destination folder path/',URLs$Site[i],'.tar.gz'),
+                        exdir = '~/destination folder path/'))
+  if (class(unpacked) %in% 'try-error') {next} 
+  else {}
+}
