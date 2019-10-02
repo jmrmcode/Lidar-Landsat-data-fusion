@@ -17,7 +17,7 @@ Welcome to Lidar-Landsat-data-fusion repository!. Here you can find important in
 
 **STATUS**: LIVE
 
-The first release for this repository has been published on Zenodo: [![DOI](https://zenodo.org/badge/187694254.svg)](https://zenodo.org/badge/latestdoi/187694254)
+The first release for this repository has been published on Zenodo: [![DOI](https://zenodo.org/badge/211709807.svg)](https://zenodo.org/badge/latestdoi/211709807)
 
 Feedback and contributions of any form are welcomed. If you feel that any control flow constructs or piece of code can be improved and/or optimized, feel free to [contact us](https://github.com/jmrmcode) and contribute.
 
