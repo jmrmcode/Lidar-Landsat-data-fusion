@@ -1,4 +1,3 @@
-# # source: https://github.com/JesJehle/earthEngineGrabR
 # require('remotes')
 # remotes::install_github("JesJehle/earthEngineGrabR")
 require('earthEngineGrabR')
@@ -10,16 +9,17 @@ require('googledrive')
 require('rgeos')
 require('spatialEco')
 
-shapefilesLiDAR <- list.files('C:/Users/juanmiRequena/Documents/AIforEarth/shapefilesLiDAR', pattern = '.shp')
+# import the paths to the shapefiles of points
+shapefilesLiDAR <- list.files('~/path to the folder having the shapefiles of points', pattern = '.shp')
 
-# load the NDVI Landsat imagery from the GEE
+# GEE products names
 # NDVI "LANDSAT/LC08/C01/T1_8DAY_NDVI"
 # EVI "LANDSAT/LC08/C01/T1_8DAY_EVI"
 # NDWI "LANDSAT/LC08/C01/T1_8DAY_NDWI"
 
 GEEImage1 <- NULL
 GEEImage1Rep <- NULL
-
+# loop for grabbing vegetation indices from GEE
 for (k in shapefilesLiDAR) {
   
   GEEImage <- try(ee_grab(data = ee_data_collection(datasetID = "LANDSAT/LC08/C01/T1_8DAY_EVI",
@@ -30,28 +30,28 @@ for (k in shapefilesLiDAR) {
               resolution = 30,
               bandSelection = c('EVI')
   ),
-  targetArea = paste0('C:/Users/juanmiRequena/Documents/AIforEarth/shapefilesLiDAR/', k)
+  targetArea = paste0('~/path to the folder having the shapefiles of points/', k)
   ))
   
   if(class(GEEImage) %in% 'try-error') {GEEImageRep <- ee_grab(data = ee_data_collection(datasetID = "LANDSAT/LC08/C01/T1_8DAY_EVI",
-                     spatialReducer = "mean",
-                     temporalReducer = "mean",
-                     timeStart = "2013-04-01",
-                     timeEnd = "2013-05-31",
-                     resolution = 30,
-                     bandSelection = c('EVI')
+                spatialReducer = "mean",
+                temporalReducer = "mean",
+                timeStart = "2013-04-01",
+                timeEnd = "2013-05-31",
+                resolution = 30,
+                bandSelection = c('EVI')
   ),
-  targetArea = paste0('C:/Users/juanmiRequena/Documents/AIforEarth/shapefilesLiDAR/', k)
+  targetArea = paste0('~/path to the folder having the shapefiles of points/', k)
   )
   
   GEEImage1Rep<-as.array(as.list(GEEImageRep))[c(3,4,6)]
-  save(GEEImage1Rep, file = paste0('C:/Users/juanmiRequena/Documents/AIforEarth/EVI/',str_remove(k,pattern = '.shp'),'.Rdata'))
+  save(GEEImage1Rep, file = paste0('~/path to the destination folder/',str_remove(k,pattern = '.shp'),'.Rdata'))
   drive_rm(str_remove(k,pattern = '.shp'))
   
   } else {
     
     GEEImage1<-as.array(as.list(GEEImage))[c(3,4,6)]
-    save(GEEImage1, file = paste0('C:/Users/juanmiRequena/Documents/AIforEarth/EVI/',str_remove(k,pattern = '.shp'),'.Rdata'))
+    save(GEEImage1, file = paste0('~/path to the destination folder/',str_remove(k,pattern = '.shp'),'.Rdata'))
     drive_rm(str_remove(k,pattern = '.shp'))
     
   }
