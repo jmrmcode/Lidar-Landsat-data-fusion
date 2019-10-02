@@ -9,11 +9,11 @@ require('stringr')
 require('spatialEco')
 require('filesstrings')
 
-## load the paths to the Lidar images
-pathTifImages <- list.files('~/path to the folder having the imported Lidar images')
+## load the paths to the Lidar images imported by the Import&UnpackLidarImages script
+pathTifImages <- list.files('~/path to the folder where the Lidar images are located')
 
 # load the Landsat tiles shapefile
-pathrow <- shapefile('~/path the folder having the tiles shapefile/WRS2_descending.shp')[,c(7,8)]
+pathrow <- shapefile('~/path the folder where the path/row density grid of Landsat is located/WRS2_descending.shp')[,c(7,8)]
 pathrow <- st_as_sf(pathrow)
 # get all the available Landsat images
 res <- lsat_scenes()
@@ -24,7 +24,7 @@ for (j in pathTifImages) {
   gc(full = TRUE)
   
   # import the Lidar images
-  gg <- raster(paste0('~/path to the folder having the imported Lidar images/',j))
+  gg <- raster(paste0('~/path to the folder having the Lidar images/',j))
   # get the coordinates of the centroids of the 1x1 m pixels
   ggg <- rasterToPoints(gg, spatial = TRUE)
   # reclassify to 1s the native Lidar image
@@ -33,7 +33,7 @@ for (j in pathTifImages) {
   # aggregate the reclassified image to 30x30 m pixels
   ssagg <- try(agg <- aggregate(gggg, fact=100))
   # discard images which don't allow aggregating to 30 m and remove the matching Lidar image
-  if(class(ssagg) %in% 'try-error') {file.remove(paste0('~/path to the folder having the imported Lidar images/',j)); next} 
+  if(class(ssagg) %in% 'try-error') {file.remove(paste0('~/path to the folder where the Lidar images are located/',j)); next} 
   else {
     
     # vectorize the aggregated image to get its boundary
@@ -60,7 +60,7 @@ for (j in pathTifImages) {
       # reduce the boundaries of the Lidat images by 50 m 
       boundBuf <- gBuffer(vvv,width = -50)
       # discard shapefiles smaller than 50 m and remove the matching Lidar image
-      if (is.null(boundBuf)) {file.remove(paste0('~/path to the folder having the imported Lidar images/',j)); next} 
+      if (is.null(boundBuf)) {file.remove(paste0('~/path to the folder where the Lidar images are located/',j)); next} 
       else {
         
         # reduce the boundaries of the 30x30 m plot by 5 m
@@ -80,7 +80,7 @@ for (j in pathTifImages) {
         spSample <- try(spSampleB <- pointsClip[sample(1:length(pointsClip),1000),])
         
         # discard shapefiles with less than 1000 points and remove the matching LiDAR image
-        if(class(spSample) %in% 'try-error') {file.remove(paste0('~/path to the folder having the imported Lidar images/',j)); next} 
+        if(class(spSample) %in% 'try-error') {file.remove(paste0('~/path to the folder where the Lidar images are located/',j)); next} 
         else {
           
           # add the polygons ID as a column
@@ -88,7 +88,7 @@ for (j in pathTifImages) {
           # transform the CRS to match the one of Landsat images below
           finalPoints <- spTransform(finalPoints1, CRS("+proj=longlat +init=epsg:4326"))
           # export the shapefile of points
-          writeOGR(finalPoints, dsn = "~/destination folder path",layer = str_remove(file_path_sans_ext(basename(j)), pattern = "AMIGACarb_"),
+          writeOGR(finalPoints, dsn = "~/the destination folder path",layer = str_remove(file_path_sans_ext(basename(j)), pattern = "AMIGACarb_"),
           driver = "ESRI Shapefile", verbose = F)
         }
       }
@@ -106,7 +106,7 @@ for (j in pathTifImages) {
       # reduce the boundaries of the LiDAR images by 50 m 
       boundBuf <- gBuffer(vvv,width = -50)
       # discard shapefile smaller than 50 m and remove the matching Lidar image
-      if (is.null(boundBuf)) {file.remove(paste0('~/path to the folder having the imported Lidar images/',j)); next} 
+      if (is.null(boundBuf)) {file.remove(paste0('~/path to the folder where the Lidar images are located/',j)); next} 
       else {
         
         # reduce the boundaries of the 30x30 m plot by 5 m
@@ -126,7 +126,7 @@ for (j in pathTifImages) {
         spSample <- try(spSampleB <- pointsClip[sample(1:length(pointsClip),1000),])
         
         # discard shapefiles with less than 1000 points and remove the matching LiDAR image
-        if(class(spSample) %in% 'try-error') {file.remove(paste0('~/path to the folder having the imported Lidar images/',j)); next} 
+        if(class(spSample) %in% 'try-error') {file.remove(paste0('~/path to the folder where the Lidar images are located/',j)); next} 
         else {
           
           # add the polygon ID as a column
@@ -134,7 +134,7 @@ for (j in pathTifImages) {
           # transform the CRS to match the one of Landsat images below
           finalPoints <- spTransform(finalPoints1, CRS("+proj=longlat +init=epsg:4326"))
           # export the points shapefile
-          writeOGR(finalPoints, dsn = '~/destination folder path',layer = str_remove(file_path_sans_ext(basename(j)), pattern = "AMIGACarb_"),
+          writeOGR(finalPoints, dsn = '~/the destination folder path',layer = str_remove(file_path_sans_ext(basename(j)), pattern = "AMIGACarb_"),
           driver = "ESRI Shapefile", verbose = F)
         }
       }
