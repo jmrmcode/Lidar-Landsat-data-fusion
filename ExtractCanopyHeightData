@@ -1,0 +1,30 @@
+require('raster')
+require('rgdal')
+require('stringr')
+require('filesstrings')
+require('rgeos')
+require('spatialEco')
+
+## load the paths to the Lidar images
+pathTifImages <- list.files('~/path to the folder having the imported Lidar images')
+# import the paths to the shapefiles of points
+shapefilesLiDAR <- list.files('~/path to the folder having the shapefiles of points', pattern = '.shp')
+
+lidar1 <- NULL
+lidar2 <- NULL
+# loop for extracting canopy height data using the shapefiles of points
+for (z in shapefilesLiDAR) {
+  
+  index <- match(z,shapefilesLiDAR)
+  LiDARimg <- raster(paste0('~/path to the folder having the imported Lidar images/', pathTifImages[index]))
+  shapefileLiD1 <- shapefile(paste0('~/path to the folder having the shapefiles of points/', shapefilesLiDAR[index]))
+  refSyst <- crs(LiDARimg, asText=T)
+  shapefileLiD <- spTransform(shapefileLiD1, CRS(refSyst))
+  
+  liDARdata <- extract(LiDARimg, shapefileLiD, fun=mean, na.rm=TRUE, df=TRUE)
+  lidar1<-data.frame(liDARdata)
+  lidar2<-as.data.frame(abind(lidar2,lidar1,along=))
+  lidar3 <- lidar2[, seq(2, ncol(lidar2), by = 2)]
+  
+}
+save(lidar3, file = '~/path to the destination folder/name.Rdata')
