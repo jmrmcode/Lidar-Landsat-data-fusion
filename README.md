@@ -9,7 +9,7 @@ A collection of R scripts to import, manipulate and sample iteratively large-sca
 4. [Development team](#Development_team)
 5. [Key documents](#Key_documents)
 6. [Supplementary data](#Supplementary_data)
-7. [Licenses](#Licenses)
+7. [License](#License)
 
 ## Introduction
 
@@ -51,3 +51,7 @@ Airborne light detection and ranging (lidar) data have great potential to map ve
 ## Supplementary data<a name="Supplementary_data"></a>
 
 URLs, tiles Landsat shapefile, 
+
+## License <a name="License"></a>
+
+[License](LICENSE)
