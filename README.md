@@ -46,6 +46,7 @@ Airborne light detection and ranging (lidar) data have great potential to map ve
 - [Import&UnpackLidarImages](Import&UnpackLidarImages) - Import and unpack Lidar images
 - [SampleLidarDataNestedInLandsatPixels](SampleLidarDataNestedInLandsatPixels) - Access to Landsat images that spatially overlap with the Lidar images and sample Lidar-derived canopy height data nested in Landsat pixels
 - [ImportVegetationIndicesDataFromGEE](ImportVegetationIndicesDataFromGEE) - Request and import Landsat-derived vegetation indices from GEE
+- [ExtractCanopyHeightData](ExtractCanopyHeightData) - Extract Lidar-derived canopy height data
 
 ## Supplementary data<a name="Supplementary_data"></a>
 
