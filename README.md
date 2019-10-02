@@ -50,7 +50,7 @@ Airborne light detection and ranging (lidar) data have great potential to map ve
 
 ## Supplementary data<a name="Supplementary_data"></a>
 
-The Lidar-Landsat-data-fusion repository has been developed based on 808 airborne lidar acquisitions at a national scale in Mexico. To run successfully the R code provided here, you may want to download two additional files: [urls.csv](urls.csv) and [WRS2_descending.zip](WRS2_descending.zip). The former contains the URL paths to the G-LiHT NASA server for each acquisition and is required for running [Import&UnpackLidarImages](Import&UnpackLidarImages) script, while the latter contains the [path/row density grid](https://landsat.gsfc.nasa.gov/landsat-the-cornerstone-of-global-land-imaging/) of the Landsat acquisitions and is required for running [SampleLidarDataNestedInLandsatPixels](SampleLidarDataNestedInLandsatPixels) file. 
+The Lidar-Landsat-data-fusion repository has been developed based on 39 airborne lidar acquisitions at a national scale in Mexico. To run successfully the R code provided here, you may want to download two additional files: [urls.csv](urls.csv) and [WRS2_descending.zip](WRS2_descending.zip). The former contains the URL paths to the G-LiHT NASA server for each acquisition and is required for running the [Import&UnpackLidarImages](Import&UnpackLidarImages) script, while the latter contains the [path/row density grid](https://landsat.gsfc.nasa.gov/landsat-the-cornerstone-of-global-land-imaging/) of the Landsat acquisitions and is required for running the [SampleLidarDataNestedInLandsatPixels](SampleLidarDataNestedInLandsatPixels) file. 
 
 ## License <a name="License"></a>
 
