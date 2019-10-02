@@ -6,9 +6,9 @@ require('rgeos')
 require('spatialEco')
 
 ## load the paths to the Lidar images
-pathTifImages <- list.files('~/path to the folder having the imported Lidar images')
+pathTifImages <- list.files('~/path to the folder where the Lidar images are located')
 # import the paths to the shapefiles of points
-shapefilesLiDAR <- list.files('~/path to the folder having the shapefiles of points', pattern = '.shp')
+shapefilesLiDAR <- list.files('~/path to the folder where the shapefiles of points are located', pattern = '.shp')
 
 lidar1 <- NULL
 lidar2 <- NULL
@@ -16,8 +16,8 @@ lidar2 <- NULL
 for (z in shapefilesLiDAR) {
   
   index <- match(z,shapefilesLiDAR)
-  LiDARimg <- raster(paste0('~/path to the folder having the imported Lidar images/', pathTifImages[index]))
-  shapefileLiD1 <- shapefile(paste0('~/path to the folder having the shapefiles of points/', shapefilesLiDAR[index]))
+  LiDARimg <- raster(paste0('~/path to the folder where the Lidar images are located/', pathTifImages[index]))
+  shapefileLiD1 <- shapefile(paste0('~/path to the folder where the shapefiles of points are located/', shapefilesLiDAR[index]))
   refSyst <- crs(LiDARimg, asText=T)
   shapefileLiD <- spTransform(shapefileLiD1, CRS(refSyst))
   
@@ -27,4 +27,4 @@ for (z in shapefilesLiDAR) {
   lidar3 <- lidar2[, seq(2, ncol(lidar2), by = 2)]
   
 }
-save(lidar3, file = '~/path to the destination folder/name.Rdata')
+save(lidar3, file = '~/the path to the destination folder/name.Rdata')
