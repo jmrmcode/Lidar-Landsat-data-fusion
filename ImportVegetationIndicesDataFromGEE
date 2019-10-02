@@ -9,13 +9,13 @@ require('googledrive')
 require('rgeos')
 require('spatialEco')
 
-# import the paths to the shapefiles of points
-shapefilesLiDAR <- list.files('~/path to the folder having the shapefiles of points', pattern = '.shp')
+# import the paths to the shapefiles of points created by the "SampleLidarDataNestedInLandsatPixels" script
+shapefilesLiDAR <- list.files('~/path to the folder where the shapefiles of points are located', pattern = '.shp')
 
-# GEE products names
-# NDVI "LANDSAT/LC08/C01/T1_8DAY_NDVI"
-# EVI "LANDSAT/LC08/C01/T1_8DAY_EVI"
-# NDWI "LANDSAT/LC08/C01/T1_8DAY_NDWI"
+# names of the Vegetation indices in GEE
+# NDVI: "LANDSAT/LC08/C01/T1_8DAY_NDVI"
+# EVI: "LANDSAT/LC08/C01/T1_8DAY_EVI"
+# NDWI: "LANDSAT/LC08/C01/T1_8DAY_NDWI"
 
 GEEImage1 <- NULL
 GEEImage1Rep <- NULL
@@ -41,17 +41,17 @@ for (k in shapefilesLiDAR) {
                 resolution = 30,
                 bandSelection = c('EVI')
   ),
-  targetArea = paste0('~/path to the folder having the shapefiles of points/', k)
+  targetArea = paste0('~/path to the folder where the shapefiles of points are located/', k)
   )
   
   GEEImage1Rep<-as.array(as.list(GEEImageRep))[c(3,4,6)]
-  save(GEEImage1Rep, file = paste0('~/path to the destination folder/',str_remove(k,pattern = '.shp'),'.Rdata'))
+  save(GEEImage1Rep, file = paste0('~/the path to the destination folder/',str_remove(k,pattern = '.shp'),'.Rdata'))
   drive_rm(str_remove(k,pattern = '.shp'))
   
   } else {
     
     GEEImage1<-as.array(as.list(GEEImage))[c(3,4,6)]
-    save(GEEImage1, file = paste0('~/path to the destination folder/',str_remove(k,pattern = '.shp'),'.Rdata'))
+    save(GEEImage1, file = paste0('~/the path to the destination folder/',str_remove(k,pattern = '.shp'),'.Rdata'))
     drive_rm(str_remove(k,pattern = '.shp'))
     
   }
