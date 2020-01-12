@@ -10,21 +10,34 @@ pathTifImages <- list.files('~/path to the folder where the Lidar images are loc
 # import the paths to the shapefiles of points
 shapefilesLiDAR <- list.files('~/path to the folder where the shapefiles of points are located', pattern = '.shp')
 
-lidar1 <- NULL
-lidar2 <- NULL
-# loop for extracting canopy height data using the shapefiles of points
+matt <- matrix(NA, nrow = 808000, ncol = 4)
+j <- c(1:1000) - 1000
 for (z in shapefilesLiDAR) {
   
   index <- match(z,shapefilesLiDAR)
-  LiDARimg <- raster(paste0('~/path to the folder where the Lidar images are located/', pathTifImages[index]))
-  shapefileLiD1 <- shapefile(paste0('~/path to the folder where the shapefiles of points are located/', shapefilesLiDAR[index]))
+  LiDARimg <- raster(paste0('~/path to the folder where the Lidar images are located'', pathTifImages[index]))
+  shapefileLiD1 <- shapefile(paste0('~/path to the folder where the shapefiles of points are located', shapefilesLiDAR[index]))
   refSyst <- crs(LiDARimg, asText=T)
   shapefileLiD <- spTransform(shapefileLiD1, CRS(refSyst))
+  coordd <- shapefileLiD1@coords
+  liDARdata <- cbind(extract(LiDARimg, shapefileLiD, fun=mean, na.rm=TRUE, df=TRUE), coordd)
   
-  liDARdata <- extract(LiDARimg, shapefileLiD, fun=mean, na.rm=TRUE, df=TRUE)
-  lidar1<-data.frame(liDARdata)
-  lidar2<-as.data.frame(abind(lidar2,lidar1,along=))
-  lidar3 <- lidar2[, seq(2, ncol(lidar2), by = 2)]
+  j <- j+1000
+  matt[j,1] <- as.numeric(liDARdata[,2])
+  matt[j,2] <- as.numeric(liDARdata[,3])
+  matt[j,3] <- as.numeric(liDARdata[,4])
+  matt[j,4] <- rep(noquote(names(LiDARimg)), 1000)
   
 }
-save(lidar3, file = '~/the path to the destination folder/name.Rdata')
+ 
+canopyHeight <- data.frame(canopyheight   = numeric(808000),
+                       X = numeric(808000),
+                       Y = numeric(808000),
+                       ID_G_LiTH_Plot = character(808000))
+
+canopyHeight$canopyheight <- as.numeric(matt[,1])
+canopyHeight$X <- as.numeric(matt[,2])
+canopyHeight$Y <- as.numeric(matt[,3])
+canopyHeight$ID_G_LiTH_Plot <- matt[,4]
+
+save(canopyHeight, file = '~/the path to the destination folder/name.Rdata')
