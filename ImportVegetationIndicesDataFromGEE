@@ -17,6 +17,7 @@ shapefilesLiDAR <- list.files('~/path to the folder where the shapefiles of poin
 # EVI: "LANDSAT/LC08/C01/T1_8DAY_EVI"
 # NDWI: "LANDSAT/LC08/C01/T1_8DAY_NDWI"
 
+# The target area file needs to be uploaded manually by using the Asset Manager of the GEE code editor
 GEEImage1 <- NULL
 GEEImage1Rep <- NULL
 # loop for grabbing vegetation indices from GEE
@@ -30,7 +31,8 @@ for (k in shapefilesLiDAR) {
               resolution = 30,
               bandSelection = c('EVI')
   ),
-  targetArea = paste0('~/path to the folder having the shapefiles of points/', k)
+  targetAreaAssetPath = "users/.../asset name", # Use your GEE username instead ()
+  download_path = "~/path to the local folder where the VI should be saved"
   ))
   
   if(class(GEEImage) %in% 'try-error') {GEEImageRep <- ee_grab(data = ee_data_collection(datasetID = "LANDSAT/LC08/C01/T1_8DAY_EVI",
@@ -41,7 +43,8 @@ for (k in shapefilesLiDAR) {
                 resolution = 30,
                 bandSelection = c('EVI')
   ),
-  targetArea = paste0('~/path to the folder where the shapefiles of points are located/', k)
+  targetAreaAssetPath = "users/.../asset name", # Use your GEE username instead ()
+  download_path = "~/path to the local folder where the VI should be saved"
   )
   
   GEEImage1Rep<-as.array(as.list(GEEImageRep))[c(3,4,6)]
