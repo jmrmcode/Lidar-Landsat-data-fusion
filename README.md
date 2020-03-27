@@ -29,9 +29,9 @@ Airborne light detection and ranging (lidar) data have great potential to map ve
 
 - Import and unpack Lidar images from the [G-LiHT NASA server](https://glihtdata.gsfc.nasa.gov/).
 - From [Amazon Web Services](https://registry.opendata.aws/landsat-8/) public data sets, access to Landsat 8 images that spatially overlap with the Lidar images.
-- Randomly extract and export points sampled from 1x1 m Lidar pixels nested in 30x30 m Landsat pixels according to the following design:
+- Randomly extract and export points sampled from 1x1 m canopy height pixels nested in 30x30 m Landsat pixels according to the following design:
 ![Sampling design](https://github.com/jmrmcode/Lidar-Landsat-data-fusion/blob/master/general.png)
-*Legend: Lidar image of canopy height acquired at NASA's G-LiHT Data Center (background image); 30x30 m Landsat pixels (in purple); 50 meters buffer to discard missing data (outer line in red); Landsat pixels reduced by 5 m (in green) to avoid edge effect. Sampling points (in orange).*
+*Legend: Sampling points in 1x1 m canopy height pixels nested in 30x30 m Landsat pixels. Lidar-derived canopy height image acquired at NASA's G-LiHT Data Center (background image); Landsat pixels (in purple); 50 meters buffer to discard missing data (outer line in red); Landsat pixels reduced by 5 m (in green) to avoid edge effect. Sampling points (in orange).*
 
 - Request and import Landsat-derived [vegetation indices](https://en.wikipedia.org/wiki/Vegetation_Index) from [Google Earth Engine (GEE)](https://earthengine.google.com/) using the points sampled earlier.
 - Extract Lidar-derived canopy height data using the points sampled earlier.
